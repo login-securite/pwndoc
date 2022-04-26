@@ -79,7 +79,26 @@
 								/>
 							</q-item-section>
 						</q-item>
-						
+						<q-item>
+						  <q-item-section>
+						    <q-select
+						      v-model="findingSort"
+						      :label="'Filter by'"
+						      :options="['category', 'customFields']"
+						      @input="updateSortFindings"
+						      >
+						    </q-select>
+						  </q-item-section>
+						  <q-item-section v-if="findingSort === 'customFields'">
+						    <q-select
+						      v-model="customFieldLabelSort"
+						      :label="'Label'"
+						      :options="customFieldLabelSortOptions"
+						      @input="updateSortFindings"
+						      >
+						    </q-select>
+						  </q-item-section>
+						</q-item>
 						<div v-for="categoryFindings of findingList" :key="categoryFindings.category">
 							<q-item>
 								<q-item-section>
@@ -256,7 +275,11 @@ export default {
 					vulnCategories: [],
 					findingList: [],
 					frontEndAuditState: Utils.AUDIT_VIEW_STATE.EDIT_READONLY,
-					AUDIT_VIEW_STATE: Utils.AUDIT_VIEW_STATE
+				    AUDIT_VIEW_STATE: Utils.AUDIT_VIEW_STATE,
+				    findingSort: "customFields",
+				    customFieldLabelSort: "perimeter",
+				    customFieldLabelSortOptions: []
+
 				}
 		},
 
@@ -281,9 +304,24 @@ export default {
 		watch: {
 			'audit.findings': {
 				handler(newVal, oldVal) {
-					var result = _.chain(this.audit.findings)
-					.groupBy("category")
-					.map((value, key) => {
+				    var result = _.chain(this.audit.findings).
+					map((value, key) => {
+					    if (value['customFields']) {
+						value['customFields'].map((value) => {
+						    this.customFieldLabelSortOptions.indexOf(value.customField.label) === -1 ? this.customFieldLabelSortOptions.push(value.customField.label) : null
+						})
+					    }
+					    var sortingField = "category";
+					    if (this.findingSort === "customFields") {
+						sortingField = value["customFields"].find(element => element.customField.label === this.customFieldLabelSort);
+						if (sortingField && sortingField.text === "") sortingField.text = "undefined";
+						return({...value, sortingField: sortingField ? sortingField.text : 'undefined'});
+					    } else {
+						return({...value, sortingField: value['category']});
+					    }
+					})
+					.groupBy("sortingField")
+					    .map((value, key) => {
 						if (key === 'undefined') key = 'No Category'
 						var sortOption = this.audit.sortFindings.find(option => option.category === key) // Get sort option saved in audit
 						
@@ -305,8 +343,7 @@ export default {
 						return {category: key, findings: value, sortOption: sortOption}
 					})
 					.value()
-
-					this.findingList = result
+				    this.findingList = result
 				},
 				deep: true,
 				immediate: true

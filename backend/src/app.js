@@ -99,6 +99,22 @@ app.use(bodyParser.urlencoded({
 
 app.use(cookieParser())
 
+var logger = require('morgan');
+var chalk = require('chalk');
+app.use(logger(function (tokens, req, res) {
+    return [
+        tokens.date(req, res),
+        '-',
+        chalk.yellow.bold(tokens.method(req, res)),
+        tokens.url(req, res),
+        chalk.green.bold(tokens.status(req, res)),
+        '-',
+        tokens.res(req, res, 'content-length'),
+        '-',
+        tokens['response-time'](req, res), 'ms'
+        ].join(' ')
+}));
+
 // Routes import
 require('./routes/user')(app);
 require('./routes/audit')(app, io);
