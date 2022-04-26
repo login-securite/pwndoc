@@ -19,6 +19,14 @@
                 <language-selector></language-selector>
               </q-item-section>
             </q-item>
+	    <br/>
+	    <div class="text-grey-8">{{$t('activateCheckSpelling')}}</div>
+	    <br/>
+            <q-item>
+              <q-item-section class="col-md-2">
+                <q-toggle :label="$t('btn.enable')" v-model="settings.language.public.spellchecker" />
+              </q-item-section>
+	    </q-item>
           </q-card-section>
         </q-card>
 
@@ -281,4 +289,4 @@
             </q-card-section>
         </q-card>
     </div>
-</div>        
+</div>

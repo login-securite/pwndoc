@@ -11,7 +11,7 @@ export default {
         return {
             loading: true,
             UserService: UserService,
-            settings: {},
+            settings: {'language':{}},
             settingsOrig : {},
             canEdit: false
         }
@@ -36,7 +36,7 @@ export default {
 
     mounted: function() {
         if (UserService.isAllowed('settings:read')) {
-            this.getSettings()
+            this.getSettings();
             this.canEdit = this.UserService.isAllowed('settings:update');
             document.addEventListener('keydown', this._listener, false)
         }
@@ -59,7 +59,7 @@ export default {
 
         getSettings: function() {
             SettingsService.getSettings()
-            .then((data) => {
+		.then((data) => {
                 this.settings = data.data.datas;
                 this.settingsOrig = this.$_.cloneDeep(this.settings);
                 this.loading = false
@@ -81,7 +81,7 @@ export default {
                 this.settings.reviews.public.minReviewers = this.settings.reviews.public.minReviewers < min ? min: max;
             }
             SettingsService.updateSettings(this.settings)
-            .then((data) => {
+	    .then((data) => {
                 this.settingsOrig = this.$_.cloneDeep(this.settings);
                 this.$settings.refresh();
                 Notify.create({

@@ -5,13 +5,19 @@ module.exports = function(app) {
     
     app.get("/api/settings", acl.hasPermission('settings:read'), function(req, res) {
         Settings.getAll()
-        .then(settings => Response.Ok(res, settings))
+            .then(settings => {
+		console.log(settings);
+		Response.Ok(res, settings);
+	    })
         .catch(err => Response.Internal(res, err));
     });
 
     app.get("/api/settings/public", acl.hasPermission('settings:read-public'), function(req, res) {
         Settings.getPublic()
-        .then(settings => Response.Ok(res, settings))
+            .then(settings => {
+		console.log(settings);
+		Response.Ok(res, settings)
+	    })
         .catch(err => Response.Internal(res, err));
     });
 

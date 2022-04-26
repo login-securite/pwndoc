@@ -312,6 +312,7 @@ export default {
     newPassword: 'Nouveau Mot de Passe',
     confirmPassword: 'Confirmez le mot de passe ',
     currentPassword: 'Mot de passe actuel *',
+    activateCheckSpelling: 'Activer le correcteur orthographique',
     reports: 'Rapports',
     reportsImagesBorder: 'Bordures d\'Images de Rapport',
     addBorderToImages: 'Ajouter une bordure aux images dans le rapport généré.',

@@ -457,6 +457,7 @@ export default {
     newPassword: 'New Password',
     confirmPassword: 'Confirm Password',
     currentPassword: 'Current Password *',
+    activateCheckSpelling: 'Activate spell checker',
     reports: 'Reports',
     reportsImagesBorder: 'Report Images border',
     addBorderToImages: 'Add border to images in the generated report.',

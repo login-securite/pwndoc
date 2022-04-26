@@ -13,6 +13,8 @@ import Utils from '@/services/utils'
 
 import { $t } from 'boot/i18n'
 
+import BaseInputSpelling from '@/components/custom-text-area.vue'
+
 export default {
     data: () => {
         return {
@@ -82,10 +84,14 @@ export default {
         Breadcrumb,
         CvssCalculator,
         TextareaArray,
-        CustomFields
+        CustomFields,
+	BaseInputSpelling	
     },
 
     mounted: function() {
+	this.spellcheck = this.$settings.language.public.spellchecker;
+	console.log(this.spellcheck);
+
         this.getLanguages()
         this.getVulnTypes()
         this.getVulnerabilities()
@@ -133,7 +139,7 @@ export default {
         // Get available languages
         getLanguages: function() {
             DataService.getLanguages()
-            .then((data) => {
+		.then((data) => {
                 this.languages = data.data.datas;
                 if (this.languages.length > 0) {
                     this.dtLanguage = this.languages[0].locale;

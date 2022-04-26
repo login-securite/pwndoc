@@ -166,6 +166,11 @@
             <q-btn dense flat icon="close" @click="$refs.createModal.hide()" />
         </q-bar>
 
+	<q-card-section>
+          <q-field borderless :label="$t('description')" stack-label>
+	    <base-input-spelling value="currentVulnerability.details[currentDetailsIndex].description"></base-input-spelling>
+          </q-field>
+	</q-card-section>
         <q-card-section>
             <div class="q-col-gutter-md row">
                 <q-input

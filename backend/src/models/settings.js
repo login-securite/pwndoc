@@ -8,6 +8,12 @@ var Utils = require('../lib/utils.js');
 const colorValidator = (v) => (/^#([0-9a-f]{3}){1,2}$/i).test(v);
 
 const SettingSchema = new Schema({
+    language: {
+	enabled: {type: Boolean, default: true},
+	public: {
+	    spellchecker: { type: Boolean, default: false }
+	}
+    },
     report: { 
         enabled: {type: Boolean, default: true},
         public: {
@@ -57,7 +63,7 @@ SettingSchema.statics.getAll = () => {
 SettingSchema.statics.getPublic = () => {
     return new Promise((resolve, reject) => {
         const query = Settings.findOne({});
-        query.select('-_id report.enabled report.public reviews.enabled reviews.public');
+        query.select('-_id language.enabled language.public report.enabled report.public reviews.enabled reviews.public');
         query.exec()
             .then(settings => resolve(settings))
             .catch(err => reject(err));
