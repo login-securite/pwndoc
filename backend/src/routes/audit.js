@@ -388,9 +388,12 @@ module.exports = function(app, io) {
         }
         var update = {};
         // Optional parameters
-        if (req.body.sortFindings) update.sortFindings = req.body.sortFindings;
+        if (req.body.sortFindings) {
+	    update.sortFindings = req.body.sortFindings;
+	    if (req.body.findingSort) update.findingSort = req.body.findingSort
+	}
         if (settings.reviews.enabled && settings.reviews.private.removeApprovalsUponUpdate) update.approvals = [];
-        
+
         Audit.updateSortFindings(acl.isAllowed(req.decodedToken.role, 'audits:update-all'), req.params.auditId, req.decodedToken.id, update)
         .then(msg => {
             io.to(req.params.auditId).emit('updateAudit');

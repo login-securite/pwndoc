@@ -78,6 +78,8 @@ var AuditSchema = new Schema({
     sortFindings:       [SortOption],
     state:              { type: String, enum: ['EDIT', 'REVIEW', 'APPROVED'], default: 'EDIT'},
     approvals:          [{type: Schema.Types.ObjectId, ref: 'User'}],
+    findingSort:        {type: String, default: 'category'},
+    customFieldLabelSort: {type: String}
 }, {timestamps: true});
 
 /*
@@ -619,8 +621,11 @@ AuditSchema.statics.updateSortFindings = (isAdmin, auditId, userId, update) => {
                 throw({fn: 'NotFound', message: 'Audit not found or Insufficient Privileges'})
             else {
                 audit = row
-                if (update) // if update is null then we only sort findings (no sort options saving)
+                if (update) {
+		    // if update is null then we only sort findings (no sort options saving)
                     audit.sortFindings = update.sortFindings // saving sort options to audit
+		    audit.findingSort = update.findingSort // saving frontSide sort option
+		}
 
                 var VulnerabilityCategory = mongoose.model('VulnerabilityCategory')
                 return VulnerabilityCategory.getAll()
@@ -709,7 +714,6 @@ AuditSchema.statics.updateSortFindings = (isAdmin, auditId, userId, update) => {
             })
 
             audit.findings = findings
-
             return audit.save()
         })
         .then(() => {

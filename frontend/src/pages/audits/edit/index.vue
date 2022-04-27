@@ -65,7 +65,8 @@
 						<q-separator class="q-my-sm" />
 						<q-item>
 							<q-item-section avatar>
-								<q-icon name="fa fa-list"></q-icon>
+							  <q-icon name="fa fa-list">
+							  </q-icon>
 							</q-item-section>
 							<q-item-section>{{$t('findings')}} ({{audit.findings.length || 0}})</q-item-section>
 							<q-item-section avatar>
@@ -83,7 +84,7 @@
 						  <q-item-section>
 						    <q-select
 						      v-model="findingSort"
-						      :label="'Filter by'"
+						      :label="$t('sortBy')"
 						      :options="['category', 'customFields']"
 						      @input="updateSortFindings"
 						      >
@@ -92,7 +93,7 @@
 						  <q-item-section v-if="findingSort === 'customFields'">
 						    <q-select
 						      v-model="customFieldLabelSort"
-						      :label="'Label'"
+						      :label="$t('label')"
 						      :options="customFieldLabelSortOptions"
 						      @input="updateSortFindings"
 						      >
@@ -110,8 +111,8 @@
 										<q-menu content-style="width: 300px" anchor="bottom middle" self="top left">
 											<q-item>
 												<q-item-section>
-													<q-toggle 
-													v-model="categoryFindings.sortOption.sortAuto" 
+													<q-toggle
+													v-model="categoryFindings.sortOption.sortAuto"
 													:label="$t('automaticSorting')"
 													@input="updateSortFindings"
 													/>
@@ -137,7 +138,7 @@
 											<q-separator />
 											<q-item>
 												<q-item-section>
-													<q-btn 
+													<q-btn
 													flat
 													icon="fa fa-long-arrow-alt-up"
 													:label="$t('ascending')"
@@ -145,14 +146,14 @@
 													no-caps
 													align="left"
 													:disable="!categoryFindings.sortOption.sortAuto"
-													:color="(categoryFindings.sortOption.sortOrder === 'asc')?'green':''" 
-													@click="categoryFindings.sortOption.sortOrder = 'asc'; updateSortFindings()" 
+													:color="(categoryFindings.sortOption.sortOrder === 'asc')?'green':''"
+													@click="categoryFindings.sortOption.sortOrder = 'asc'; updateSortFindings()"
 													/>
 												</q-item-section>
 											</q-item>
 											<q-item>
 												<q-item-section>
-													<q-btn 
+													<q-btn
 													flat
 													icon="fa fa-long-arrow-alt-down"
 													:label="$t('descending')"
@@ -160,8 +161,8 @@
 													no-caps
 													align="left"
 													:disable="!categoryFindings.sortOption.sortAuto"
-													:color="(categoryFindings.sortOption.sortOrder === 'desc')?'green':''" 
-													@click="categoryFindings.sortOption.sortOrder = 'desc'; updateSortFindings()" 
+													:color="(categoryFindings.sortOption.sortOrder === 'desc')?'green':''"
+													@click="categoryFindings.sortOption.sortOrder = 'desc'; updateSortFindings()"
 													/>
 												</q-item-section>
 											</q-item>
@@ -276,8 +277,8 @@ export default {
 					findingList: [],
 					frontEndAuditState: Utils.AUDIT_VIEW_STATE.EDIT_READONLY,
 				    AUDIT_VIEW_STATE: Utils.AUDIT_VIEW_STATE,
-				    findingSort: "customFields",
-				    customFieldLabelSort: "perimeter",
+				    findingSort: "",
+				    customFieldLabelSort: "",
 				    customFieldLabelSortOptions: []
 
 				}
@@ -307,9 +308,8 @@ export default {
 				    var result = _.chain(this.audit.findings).
 					map((value, key) => {
 					    if (value['customFields']) {
-						value['customFields'].map((value) => {
-						    this.customFieldLabelSortOptions.indexOf(value.customField.label) === -1 ? this.customFieldLabelSortOptions.push(value.customField.label) : null
-						})
+						value['customFields'].map((value) =>
+						    this.customFieldLabelSortOptions.indexOf(value.customField.label) === -1 ? this.customFieldLabelSortOptions.push(value.customField.label) : null)
 					    }
 					    var sortingField = "category";
 					    if (this.findingSort === "customFields") {
@@ -343,7 +343,7 @@ export default {
 						return {category: key, findings: value, sortOption: sortOption}
 					})
 					.value()
-				    this.findingList = result
+				        this.findingList = result
 				},
 				deep: true,
 				immediate: true
@@ -498,7 +498,8 @@ export default {
 					return AuditService.getAudit(this.auditId)
 				})
 				.then((data) => {
-					this.audit = data.data.datas;
+				        this.audit = data.data.datas;
+				        this.findingSort = this.audit.findingSort;
 					this.getUIState();
 					this.getSections()
 					if (this.loading)
@@ -615,7 +616,7 @@ export default {
 			},
 
 			updateSortFindings: function() {
-				AuditService.updateAuditSortFindings(this.auditId, {sortFindings: this.audit.sortFindings})
+			    AuditService.updateAuditSortFindings(this.auditId, {sortFindings: this.audit.sortFindings, findingSort: this.findingSort})
 			},
 
 			getSortOptions: function(category) {
