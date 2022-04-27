@@ -504,25 +504,6 @@ AuditSchema.statics.deleteFinding = (isAdmin, auditId, userId, findingId) => {
     })
 }
 
-// Create section
-AuditSchema.statics.createSection = (isAdmin, auditId, userId, section) => {
-    return new Promise((resolve, reject) => { 
-        var query = Audit.findOneAndUpdate({_id: auditId, 'sections.field': {$ne: section.field}}, {$push: {sections: section}})
-        if (!isAdmin)
-            query.or([{creator: userId}, {collaborators: userId}])
-        query.exec()
-        .then((row) => {
-            if (!row)
-                throw({fn: 'NotFound', message: 'Audit not found or Section already exists or Insufficient Privileges'})
-            
-            resolve('Audit Section created successfully')
-        })
-        .catch((err) => {
-            reject(err)
-        })
-    })
-}
-
 // Get section of audit
 AuditSchema.statics.getSection = (isAdmin, auditId, userId, sectionId) => {
     return new Promise((resolve, reject) => { 
@@ -571,6 +552,30 @@ AuditSchema.statics.updateSection = (isAdmin, auditId, userId, sectionId, newSec
         })
         .then(() => {
             resolve('Audit Section updated successfully')        
+        })
+        .catch((err) => {
+            reject(err)
+        })
+    })
+}
+
+// Create section of audit
+AuditSchema.statics.createSection = (isAdmin, auditId, userId, newSection) => {
+    return new Promise((resolve, reject) => {
+        var query = Audit.findById(auditId)
+        if (!isAdmin)
+            query.or([{creator: userId}, {collaborators: userId}])
+        query.exec()
+        .then((row) => {
+            if (!row)
+                throw({fn: 'NotFound', message: 'Audit not found or Insufficient Privileges'})
+
+	    row.sections.push(newSection);
+
+	    return row.save();
+        })
+        .then(() => {
+            resolve('Audit Section updated successfully')
         })
         .catch((err) => {
             reject(err)

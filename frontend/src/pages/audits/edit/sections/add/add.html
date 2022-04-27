@@ -1,0 +1,61 @@
+<div>
+    <breadcrumb buttons :title="`${$parent.audit.name} (${$parent.audit.auditType || 'Audit Type not set'})`" :state="parentState" :approvals="parentApprovals">
+    </breadcrumb>
+
+    <div class="row q-col-gutter-md q-pa-md">
+      <div class="offset-md-1">
+
+        <q-card>
+          <q-card-section>
+            <div class="text-grey-8">{{$t('createCustomSections')}}</div>
+          </q-card-section>
+          <q-card-section class="row">
+            <div>
+              <q-item>
+                <q-item-section>
+                  <q-input
+                    :label="$t('name')"
+                    v-model="newSection.name"
+                    clearable
+                    hide-bottom-space
+                    @keyup.enter="createSection"
+                    outlined
+                    />
+                </q-item-section>
+                <q-item-section>
+                  <q-input
+                    :label="$t('fieldForTemplate')"
+                    v-model="newSection.field"
+                    clearable
+                    hide-bottom-space
+                    @keyup.enter="createSection"
+                    outlined
+                    />
+                </q-item-section>
+                <q-item-section>
+                  <q-input
+                    :label="$t('customIcon')"
+                    v-model="newSection.icon"
+                    @keyup.enter="createSection"
+                    outlined
+                    >
+                    <template v-slot:append>
+                      <q-avatar>
+                        <q-icon size='sm' :name="newSection.icon" />
+                      </q-avatar>
+                    </template>
+                  </q-input>
+                </q-item-section>
+                <q-item-section side>
+                  <q-btn color="secondary" unelevated label="+" size="md" @click="createSection" />
+                </q-item-section>
+              </q-item>
+            </div>
+
+	  </q-card-section>
+	</q-card>
+	    
+      </div>
+    </div>
+
+</div>

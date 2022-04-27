@@ -185,6 +185,22 @@
 						</div>
 						<q-separator class="q-my-sm" />
 					</div>
+					<q-item>
+					  <q-item-section avatar>
+					    <q-icon name="fa fa-list"></q-icon>
+					  </q-item-section>
+					  <q-item-section>{{$t('sections')}}</q-item-section>
+					  <q-item-section avatar>
+					    <q-btn
+					      @click="$router.push('/audits/'+auditId+'/sections/add').catch(err=>{})"
+					      icon="add"
+					      round
+					      dense
+					      color="secondary"
+					      v-if="frontEndAuditState === AUDIT_VIEW_STATE.EDIT"
+					      />
+					  </q-item-section>
+					</q-item>
 					<q-list v-for="section of audit.sections" :key="section._id">
 						<q-item :to="'/audits/'+auditId+'/sections/'+section._id">
 							<q-item-section avatar>
@@ -486,15 +502,31 @@ export default {
 				})
 			},
 
-			getSections: function() {
-				DataService.getSections()
-				.then((data) => {
-					this.sections = data.data.datas;
-				})
-				.catch((err) => {
-					console.log(err);
-				})
+		    getSections: function() {
+			this.sections = this.audit.sections;
+				// DataService.getSections()
+				// .then((data) => {
+				//     this.sections = data.data.datas;
+				//     console.log(data.data.datas);
+				//     console.log(this.audit);
+				//     AuditService.getSection(this.auditId, this.sections[0]._id)
+				// 	.then((data) => {
+				// 	    console.log("++++++++++++")
+				// 	    console.log(data);
+				// 	    console.log("++++++++++++")
+				// 	}).catch((error) => {
+				// 	    console.log(error);
+				// 	});
+				// })
+				// .catch((err) => {
+				// 	console.log(err);
+				// })
 			},
+
+		    updateSection: function(section) {
+			AuditService.updateSection(this.auditId, section._id);
+				// AuditService.updateAuditSortFindings(this.auditId, {sortFindings: this.audit.sortFindings})
+		    },
 
 			getSectionIcon: function(section) {
 				var section = this.sections.find(e => e.field === section.field)
