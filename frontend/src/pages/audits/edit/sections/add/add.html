@@ -5,6 +5,82 @@
     <div class="row q-col-gutter-md q-pa-md">
       <div class="offset-md-1">
 
+        <q-table
+          class="sticky-header-table-addfinding"
+          :columns="dtSectionsHeaders"
+          :data="sections"
+          :filter="search"
+          :filter-method="customFilter"
+          row-key="_id"
+          separator="none"
+          >
+          <template v-slot:top-row="props">
+            <q-tr>
+              <q-td style="width: 60%">
+                <q-input 
+                  dense
+                  :label="$t('search')"
+                  v-model="search.name"
+                  clearable
+                  outlined
+                  />
+              </q-td>
+              <q-td style="width: 20%">
+                <q-input 
+                  dense
+                  :label="$t('search')"
+                  v-model="search.field"
+                  clearable
+                  outlined
+                  />
+              </q-td>
+            </q-tr>
+          </template>
+
+          <template v-slot:body="props">
+            <q-tr :props="props">
+              <q-td key="name" :props="props">
+                {{props.row.name}}
+                <q-btn dense round flat :icon="props.expand ? 'arrow_drop_up' : 'arrow_drop_down'" @click="props.expand = !props.expand" />
+              </q-td>
+              <q-td key="field" :props="props">
+                {{props.row.field || $t('undefined')}}
+              </q-td>
+              <q-td key="action" :props="props" style="width:1px">
+                <q-btn flat color="primary" icon="fa fa-plus-circle" @click="addFindingFromVuln(props.row)">
+                  <q-tooltip anchor="bottom middle" self="center left" :delay="500" content-class="text-bold">{{$t('tooltip.addToFindings')}}</q-tooltip>                            
+                </q-btn>
+              </q-td>
+            </q-tr>
+            <q-tr v-show="props.expand" :props="props">
+              <q-td colspan="100%" class="bg-grey-4">
+                <div class="editor__content" style="white-space: initial" v-html="htmlEncode(props.row.detail.description)"></div>
+              </q-td>
+            </q-tr>
+          </template>
+
+          <template v-slot:bottom="scope">
+            <span v-if="vulnerabilities.length === 1">{{filteredRowsCount}} / 1 {{$t('vulnerabilityNum1')}}</span>                
+            <span v-else>{{filteredRowsCount}} / {{vulnerabilities.length}} {{$t('vulnerabilitiesNums')}}</span>  
+            <q-space />
+            <span>{{$t('resultsPerPage')}}</span>
+            <q-select
+              class="q-px-md"
+              v-model="vulnPagination.rowsPerPage"
+              :options="rowsPerPageOptions"
+              emit-value
+              map-options
+              dense
+              options-dense
+              options-cover
+              borderless
+              />
+            <!-- <q-pagination input v-model="vulnPagination.page" :max="scope.pagesNumber" />             -->
+          </template> 
+	  
+        </q-table>
+
+	
         <q-card>
           <q-card-section>
             <div class="text-grey-8">{{$t('createCustomSections')}}</div>
